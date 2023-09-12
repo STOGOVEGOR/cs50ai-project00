@@ -94,18 +94,14 @@ def shortest_path(source, target):
     """
     # TODO
     explored = set()
-    fin_degrees = []
 
     def iftarget(node):
-        nonlocal fin_degrees
         degrees = []
         while node.parent is not None:
             degrees.append(node.linkto)
             node = node.parent
         degrees.reverse()
-        if len(fin_degrees) == 0 or len(fin_degrees) > len(degrees):
-            fin_degrees = degrees
-            return fin_degrees
+        return degrees
 
     frontier = QueueFrontier()
 
@@ -118,31 +114,23 @@ def shortest_path(source, target):
 
     while True:
         if frontier.empty():
-            break
-            # raise Exception("no solution")
+            return None
 
         node = frontier.remove()
 
         if node.linkto[1] == target:
-            iftarget(node)
+            return iftarget(node)
 
         explored.add(node.linkto)
 
         for k in neighbors_for_person(node.linkto[1]):
             if k[1] == target:
                 child = Node(linkto=k, parent=node)
-                iftarget(child)
+                return iftarget(child)
             if not frontier.contains_linkto(k) and k not in explored and k[1] != source:
                 child = Node(linkto=k, parent=node)
                 frontier.add(child)
 
-        if len(fin_degrees) > 0:
-            return fin_degrees
-
-    if len(fin_degrees) > 0:
-        return fin_degrees
-    else:
-        return None
 
 def person_id_for_name(name):
     """
